@@ -14,6 +14,7 @@ Inversion of Control (IoC) and dependency injection.
 **Spring Context (spring-context):**
 
 ```xml
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-context</artifactId>
@@ -35,6 +36,7 @@ In summary, while spring-core provides the core features like IoC and utilities,
 
 **Spring-web**
 ```xml
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-web</artifactId>
@@ -46,6 +48,63 @@ It provides essential functionality for web applications, such as handling HTTP 
 with web-related components. When building a Spring-based web application, you'll often include `spring-web` as a transitive
 dependency through other Spring modules, like `spring-webmvc`¹². If you're using Spring Boot, the `spring-boot-starter-web` 
 dependency includes `spring-web` and sets up a self-contained HTTP server for your application.
+
+**DataSource**
+
+`Spring-orm`: Spring Object/Relational Mapping which provides integration layers for popular object-relational mapping 
+APIs, including JPA, JDO, and Hibernate.
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-orm</artifactId>
+    <version>6.1.11</version>
+</dependency>
+```
+
+`Hibernate's core ORM functionality`
+```xml
+<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.5.2.Final</version>
+</dependency>
+```
+
+`Jakarta Persistence API`
+
+```xml
+<!-- https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api -->
+<dependency>
+    <groupId>jakarta.persistence</groupId>
+    <artifactId>jakarta.persistence-api</artifactId>
+    <version>3.2.0</version>
+</dependency>
+```
+
+`Spring transaction`: Support for programmatic and declarative transaction management for classes that implement 
+special interfaces or any POJO.
+
+```xml
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-tx</artifactId>
+    <version>6.1.11</version>
+</dependency>
+```
+
+`Apache Commons DBCP` software implements Database Connection Pooling
+```xml
+    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-dbcp2</artifactId>
+    <version>2.12.0</version>
+</dependency>        
+        
+```
 
 # Configuration
 

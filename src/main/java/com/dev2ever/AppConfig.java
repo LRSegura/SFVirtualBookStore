@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.dev2ever")
-@Import(SampleAppConfig.class)
+@Import({SampleAppConfig.class, JpaConfig.class})
 public class AppConfig implements WebMvcConfigurer {
 
 
