@@ -105,6 +105,16 @@ special interfaces or any POJO.
 </dependency>        
         
 ```
+`Spring Data module for JPA repositories.`
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa -->
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-jpa</artifactId>
+    <version>3.3.2</version>
+</dependency>
+
+```
 
 # Configuration
 
