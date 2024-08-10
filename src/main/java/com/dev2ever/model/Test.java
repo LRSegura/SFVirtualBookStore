@@ -1,4 +1,4 @@
-package com.dev2ever.api.model;
+package com.dev2ever.model;
 
 import jakarta.persistence.*;
 
