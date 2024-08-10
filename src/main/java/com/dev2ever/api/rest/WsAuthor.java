@@ -2,11 +2,12 @@ package com.dev2ever.api.rest;
 
 import com.dev2ever.model.Author;
 import com.dev2ever.service.ServiceAuthor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("author")
+@RequestMapping("author/")
 public class WsAuthor {
 
     private final ServiceAuthor serviceAuthor;
@@ -15,15 +16,23 @@ public class WsAuthor {
         this.serviceAuthor = serviceAuthor;
     }
 
-    @GetMapping
-    public Author getAuthor() {
-        Author author = new Author();
-        author.setName("Luis");
-        return author;
+    @GetMapping("find/id")
+    public Author getAuthorById(@RequestParam("id") Long id) {
+        return serviceAuthor.getById(id);
     }
 
-    @PostMapping(consumes = "application/json")
-    public void postAuthor(@RequestBody Author author) {
+    @GetMapping("find/all")
+    public List<Author> getAllAuthors() {
+        return serviceAuthor.getAll();
+    }
+
+    @PostMapping(consumes = "application/json", value = "save")
+    public void saveAuthor(@RequestBody Author author) {
         serviceAuthor.save(author);
+    }
+
+    @DeleteMapping("delete")
+    public void deleteAuthorById(@RequestParam("id") Long id) {
+        serviceAuthor.deleteById(id);
     }
 }
