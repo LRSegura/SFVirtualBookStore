@@ -1,8 +1,51 @@
-GET http://localhost:8080/virtual-store-books/test
+GET http://localhost:8080/virtual-store-books/api/test
 ###
 
 
+########################################################################################
+### Post Author
+POST http://localhost:8080/virtual-store-books/api/author/save
+Content-Type: application/json
 
+{
+  "name": "John",
+  "lastName": "Doe",
+  "email": "author@gmail.com",
+  "phone": "000-000-0000"
+}
 
+### Get all Author
+GET http://localhost:8080/virtual-store-books/api/author/find/all
+Accept: application/json
 
+### Get Author
+GET http://localhost:8080/virtual-store-books/api/author/find/id?id=1
+Accept: application/json
 
+### Delete Author
+DELETE http://localhost:8080/virtual-store-books/api/author/delete?id=1
+Accept: application/json
+
+########################################################################################
+### Post Book
+POST http://localhost:8080/virtual-store-books/api/book/save
+Content-Type: application/json
+
+{
+  "title": "Great Tittle",
+  "publisher": "Acme",
+  "year": 2000,
+  "idAuthor": 1
+}
+
+### Get all Author
+GET http://localhost:8080/virtual-store-books/api/book/find/all
+Accept: application/json
+
+### Get Author
+GET http://localhost:8080/virtual-store-books/api/book/find/id?id=1
+Accept: application/json
+
+### Delete Author
+DELETE http://localhost:8080/virtual-store-books/api/book/delete?id=1
+Accept: application/json
