@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -27,16 +28,20 @@ public class Book extends AbstractEntity {
     @Column()
     public Integer year;
 
+    @Column()
+    public BigDecimal price;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Book book)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        return Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(publisher, book.publisher) && Objects.equals(year, book.year);
+        Book book = (Book) o;
+        return Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(publisher, book.publisher) && Objects.equals(year, book.year) && Objects.equals(price, book.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), title, author, publisher, year);
+        return Objects.hash(super.hashCode(), title, author, publisher, year, price);
     }
 }
