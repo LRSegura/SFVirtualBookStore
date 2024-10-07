@@ -558,3 +558,371 @@ public static void main(String[] args) {
 }
 ```
 This approach simplifies container instantiation, as only one class needs to be dealt with, rather than requiring you to remember a potentially large number of @Configuration classes during construction.
+
+# Profiles
+
+In Spring, profiles allow you to separate different parts of your configuration for different environments (like development, testing, production, etc.). You can activate a profile in several ways depending on your use case. Here’s how you can activate profiles in Spring:
+
+### 1. Using Application Properties
+You can specify the active profile in the application.properties file by setting the spring.profiles.active property.
+
+Example:
+
+In application.properties:
+```properties
+spring.profiles.active=dev
+```
+
+### 2. Using JVM System Properties
+You can also set the active profile when starting the application by passing a system property.
+```text
+java -jar myapp.jar --spring.profiles.active=prod
+```
+Alternatively, you can use:
+```properties
+-Dspring.profiles.active=prod
+```
+
+### 3. Using Environment Variables
+You can set an environment variable to activate a profile. On Linux or macOS, you would set an environment variable like this:
+
+```text
+export SPRING_PROFILES_ACTIVE=prod
+```
+
+On Windows:
+```text
+set SPRING_PROFILES_ACTIVE=prod
+```
+
+### 4. Using @ActiveProfiles Annotation (For Tests)
+When writing tests, you can use the **ActiveProfiles** annotation to activate a specific profile.
+
+```java
+@ActiveProfiles("test")
+@SpringBootTest
+public class MyServiceTest {
+    // Test methods here
+}
+```
+
+### 5. Using Programmatic Activation
+You can activate profiles programmatically in your code using **SpringApplication.setAdditionalProfiles()**.
+
+```java
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication app = new SpringApplication(MyApplication.class);
+        app.setAdditionalProfiles("dev");
+        app.run(args);
+    }
+}
+```
+
+# @Value
+
+The `@Value` annotation in Spring is a powerful tool used to inject values into Spring-managed beans from various sources, such as property files, system properties, environment variables, or even expressions evaluated at runtime. It provides a simple way to externalize configuration and make your application more flexible and maintainable.
+
+## **Key Features of `@Value`**
+
+1. **Injecting Property Values**: Easily inject values from `application.properties` or `application.yml` files.
+2. **SpEL Support**: Utilize Spring Expression Language (SpEL) to perform dynamic value assignments.
+3. **Default Values**: Provide default values if the desired property is not found.
+4. **Environment Variables and System Properties**: Access environment variables and system properties directly.
+
+## **Basic Usage**
+
+### 1. **Injecting Values from Property Files**
+
+Assume you have an `application.properties` file with the following content:
+
+```properties
+app.name=MySpringApp
+app.version=1.0.0
+```
+You can inject these properties into your Spring beans using the @Value annotation.
+
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AppInfo {
+
+    @Value("${app.name}")
+    private String appName;
+
+    @Value("${app.version}")
+    private String appVersion;
+
+    // Getters and setters
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+}
+
+```
+
+### 2. Providing Default Values
+   If a property might not be defined, you can specify a default value to avoid errors.
+
+```java
+@Value("${app.description:Default Description}")
+private String appDescription;
+```
+In this example, if app.description is not defined in the property files, appDescription will be set to "Default Description".
+
+### 3. Injecting Environment Variables and System Properties
+   You can access environment variables and system properties using @Value.
+
+Environment Variable:
+
+```java
+@Value("${HOME}")
+private String homeDirectory;
+```
+System Property:
+```java
+@Value("#{systemProperties['user.name']}")
+private String userName;
+```
+### 4. Using Spring Expression Language (SpEL)
+SpEL allows you to perform more complex operations, such as string concatenation, mathematical operations, or invoking methods.
+
+Concatenation Example:
+
+```java
+@Value("#{systemProperties['user.name'] + ' - ' + T(java.lang.Math).random()}")
+private String dynamicValue;
+```
+
+Conditional Expression:
+
+```java
+@Value("#{2 > 1 ? 'True' : 'False'}")
+private String conditionalValue;
+```
+
+### 5. Injecting Values into Constructor Parameters
+Starting with Spring 4.3, you can use @Value in constructor parameters for immutable fields.
+
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DatabaseConfig {
+
+    private final String url;
+    private final String username;
+    private final String password;
+
+    public DatabaseConfig(
+            @Value("${db.url}") String url,
+            @Value("${db.username}") String username,
+            @Value("${db.password}") String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
+    // Getters
+}
+```
+
+### Common Use Cases
+- **Configuration Properties:** Injecting database URLs, credentials, API keys, etc.
+- **Feature Toggles:** Enabling or disabling features based on properties.
+- **Dynamic Values:** Calculating or modifying values at runtime using SpEL.
+- **Externalized Configuration:** Making the application adaptable to different environments without changing the code.
+
+### Best Practices
+Prefer @ConfigurationProperties for Complex Configurations: While @Value is suitable for simple injections, @ConfigurationProperties is better for binding groups of related properties.
+
+```java
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties(prefix = "app")
+public class AppProperties {
+private String name;
+private String version;
+// Getters and setters
+}
+```
+
+- **Use Immutable Fields When Possible:** Prefer constructor injection with @Value to create immutable beans, enhancing 
+thread safety and testability.
+
+- **Avoid Overusing SpEL:** While powerful, excessive use of SpEL can make configurations hard to read and maintain. 
+  Use it judiciously.
+
+- **Secure Sensitive Information:** Avoid hardcoding sensitive data. Use environment variables or secure vaults to 
+  manage secrets.
+
+### Example: Comprehensive Usage
+Let's create a more comprehensive example to illustrate various aspects of @Value.
+
+**application.properties**
+```properties
+app.name=MySpringApp
+app.version=1.0.0
+app.description=This is a sample Spring application.
+app.feature.enabled=true
+db.url=jdbc:mysql://localhost:3306/mydb
+db.username=root
+db.password=secret
+```
+
+**ConfigurableService.java**
+
+Copy code
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ConfigurableService {
+
+    @Value("${app.name}")
+    private String appName;
+
+    @Value("${app.version}")
+    private String appVersion;
+
+    @Value("${app.description:No Description Provided}")
+    private String appDescription;
+
+    @Value("${app.feature.enabled:false}")
+    private boolean isFeatureEnabled;
+
+    @Value("#{systemProperties['user.home']}")
+    private String userHome;
+
+    @Value("#{T(java.lang.Math).PI}")
+    private double piValue;
+
+    // Getters
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public String getAppDescription() {
+        return appDescription;
+    }
+
+    public boolean isFeatureEnabled() {
+        return isFeatureEnabled;
+    }
+
+    public String getUserHome() {
+        return userHome;
+    }
+
+    public double getPiValue() {
+        return piValue;
+    }
+
+    // Business logic methods can use these injected values
+}
+```
+
+**Using the Service**
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ApplicationRunner {
+
+    private final ConfigurableService configurableService;
+
+    @Autowired
+    public ApplicationRunner(ConfigurableService configurableService) {
+        this.configurableService = configurableService;
+    }
+
+    public void run() {
+        System.out.println("App Name: " + configurableService.getAppName());
+        System.out.println("App Version: " + configurableService.getAppVersion());
+        System.out.println("App Description: " + configurableService.getAppDescription());
+        System.out.println("Is Feature Enabled: " + configurableService.isFeatureEnabled());
+        System.out.println("User Home Directory: " + configurableService.getUserHome());
+        System.out.println("Pi Value: " + configurableService.getPiValue());
+    }
+}
+```
+When you run the application, ApplicationRunner will print the injected values from the properties file and system properties.
+
+### Common Pitfalls and Solutions
+
+#### 1. Missing Property Placeholders
+
+- Issue: If a property key used in @Value is missing from the property sources, the application may fail to start.
+- Solution: Provide default values or ensure all necessary properties are defined.
+
+```java
+@Value("${non.existent.property:defaultValue}")
+private String someValue;
+```
+#### 2. Incorrect Syntax
+
+- Issue: Incorrect usage of ${} or #{} can lead to errors.
+- Solution: Use ${} for property placeholders and #{} for SpEL expressions.
+
+#### 3. Typographical Errors in Property Keys
+
+- Issue: Misspelling property keys leads to unresolved placeholders.
+- Solution: Double-check property keys and use tools or IDE features to manage properties.
+
+#### 4. Circular Dependencies
+
+- Issue: Overusing @Value in beans with complex dependencies might introduce circular dependencies.
+- Solution: Refactor the configuration or use @ConfigurationProperties to manage related properties collectively.
+
+
+### Advanced Usage
+**Injecting Lists and Maps**
+
+You can inject lists and maps using @Value combined with SpEL.
+
+- List Injection:
+```properties
+app.servers=server1,server2,server3
+```
+```java
+@Value("#{'${app.servers}'.split(',')}")
+private List<String> servers;
+```
+
+- Map Injection:
+```properties
+app.settings.key1=value1
+app.settings.key2=value2
+```
+
+```java
+@Value("#{${app.settings}}")
+private Map<String, String> settings;
+```
+
+### Using @Value with Optional Dependencies
+You can conditionally inject values based on the presence of certain properties.
+
+```java
+@Value("${optional.property:#{null}}")
+private String optionalProperty;
+```
+In this case, if optional.property is not defined, optionalProperty will be null.

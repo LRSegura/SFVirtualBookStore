@@ -2,12 +2,14 @@ package com.dev2ever.api.rest;
 
 import com.dev2ever.model.Author;
 import com.dev2ever.service.ServiceAuthor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("author/")
+//@Profile("production")
 public class WsAuthor {
 
     private final ServiceAuthor serviceAuthor;

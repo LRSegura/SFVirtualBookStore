@@ -3,12 +3,14 @@ package com.dev2ever.api.rest;
 
 import com.dev2ever.model.Buy;
 import com.dev2ever.service.ServiceBuy;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("buy/")
+@Profile("production")
 public class WsBuy {
 
     private final ServiceBuy serviceBuy;

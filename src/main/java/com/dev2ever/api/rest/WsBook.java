@@ -2,12 +2,14 @@ package com.dev2ever.api.rest;
 
 import com.dev2ever.model.Book;
 import com.dev2ever.service.ServiceBook;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("book/")
+@Profile("production")
 public class WsBook {
 
     private final ServiceBook serviceBook;

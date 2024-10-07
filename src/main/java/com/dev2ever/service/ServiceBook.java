@@ -5,11 +5,13 @@ import com.dev2ever.model.Author;
 import com.dev2ever.model.Book;
 import com.dev2ever.repository.RepositoryAuthor;
 import com.dev2ever.repository.RepositoryBook;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Profile("production")
 public class ServiceBook {
 
     private final RepositoryBook repositoryBook;

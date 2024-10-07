@@ -5,11 +5,13 @@ import com.dev2ever.model.Book;
 import com.dev2ever.model.Buy;
 import com.dev2ever.repository.RepositoryBook;
 import com.dev2ever.repository.RepositoryBuy;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Profile("production")
 public class ServiceBuy {
 
     private final RepositoryBuy repositoryBuy;

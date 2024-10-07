@@ -7,20 +7,17 @@ import com.dev2ever.sample.component.SampleComponentD;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
+@Profile("test")
 public class SampleAppConfig {
 
     @Bean
     public SampleComponentA sampleComponentA(ApplicationContext applicationContext){
         return new SampleComponentA(sampleComponentB(), applicationContext);
     }
-
-//    @Bean
-//    public SampleComponentA sampleComponentAA(SampleComponentB sampleComponentB){
-//        return new SampleComponentA(sampleComponentB);
-//    }
 
     @Bean
     @Scope("prototype")
