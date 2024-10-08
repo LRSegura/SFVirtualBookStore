@@ -17,10 +17,10 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("com.dev2ever.repository")
-public class JpaConfig {
+@Profile("production")
+public class JpaConfig extends BeanInfo{
 
     @Bean
-    @Profile("production")
     public DataSource dataSource(Environment env) {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty("db.driver"));

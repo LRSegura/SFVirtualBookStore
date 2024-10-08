@@ -12,9 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.dev2ever")
-@Import({SampleAppConfig.class, JpaConfig.class})
+@Import({SampleAppConfig.class, ProductionAppConfig.class})
 @PropertySource("classpath:app.properties")
-public class AppConfig implements WebMvcConfigurer {
+public class AppConfig extends BeanInfo implements WebMvcConfigurer {
 
 
 }
