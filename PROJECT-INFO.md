@@ -116,6 +116,17 @@ special interfaces or any POJO.
 
 ```
 
+`Spring AOP.`
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
+<dependency>
+     <groupId>org.springframework</groupId>
+     <artifactId>spring-aspects</artifactId>
+     <version>6.1.13</version>
+ </dependency>
+```
+
 # Configuration
 
 **dispatcher-servlet.xml (is it necessary?):**
