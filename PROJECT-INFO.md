@@ -127,6 +127,40 @@ special interfaces or any POJO.
  </dependency>
 ```
 
+`Spring Test.`
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>6.1.14</version>
+            <scope>test</scope>
+        </dependency>
+```
+
+`Junit.`
+
+```xml
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.9.1</version>
+        <scope>test</scope>
+    </dependency>
+```
+
+`H2.`
+```xml
+<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <version>2.3.232</version>
+    <scope>test</scope>
+</dependency>
+
+```
 # Configuration
 
 **dispatcher-servlet.xml (is it necessary?):**
