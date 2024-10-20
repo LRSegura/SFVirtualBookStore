@@ -1,19 +1,19 @@
-create table author
+CREATE TABLE author
 (
-    optlock  integer,
-    id       bigint       not null        primary key,
-    email    varchar(255),
-    lastname varchar(255) not null,
-    name     varchar(255) not null,
-    phone    varchar(255)
+    id       BIGINT       NOT NULL        PRIMARY KEY,
+    email    VARCHAR(255),
+    lastname VARCHAR(255) NOT NULL,
+    name     VARCHAR(255) NOT NULL,
+    phone    VARCHAR(255),
+    version  INTEGER
 );
 
-create table book
+CREATE TABLE book
 (
-    optlock   integer,
-    year      integer,
-    id        bigint       not null        primary key,
-    author_id bigint       not null        constraint fk_book_author            references author,
-    publisher varchar(255),
-    title     varchar(255) not null
+    release_year      INTEGER,
+    id        BIGINT       NOT NULL        PRIMARY KEY,
+    author_id BIGINT       NOT NULL        CONSTRAINT fk_book_author REFERENCES author(id),
+    publisher VARCHAR(255),
+    title     VARCHAR(255) NOT NULL,
+    version  INTEGER
 );

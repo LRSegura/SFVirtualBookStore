@@ -1,28 +1,19 @@
 package com.dev2ever.config;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import javax.sql.DataSource;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
 
-@Configuration
-@Profile("local")
-public class LocalConfigurationTest {
 
-//    @Bean
-//    public DataSource dataSource(){
-//        return
-//                (new EmbeddedDatabaseBuilder())
-//                        .addScript("classpath:schema.sql")
-//                        .addScript("classpath:data.sql")
-//                        .build();
-//
-//
-//    }
+@ComponentScan(basePackages = {"com.dev2ever"})
+@TestConfiguration
+//@Profile("production")
+public class LocalConfigurationTest {
 
     @Bean
     public DataSource dataSource() {
@@ -31,8 +22,8 @@ public class LocalConfigurationTest {
                 .setType(H2)
                 .setScriptEncoding("UTF-8")
                 .ignoreFailedDrops(true)
-//                .addScript("classpath:schema.sql")
-//                .addScript("classpath:data.sql")
+                .addScript("classpath:schema.sql")
+                .addScript("classpath:data.sql")
                 .build();
     }
 }

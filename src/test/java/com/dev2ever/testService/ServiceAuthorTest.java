@@ -1,23 +1,23 @@
-package com.dev2ever.service;
+package com.dev2ever.testService;
 
 import com.dev2ever.config.LocalConfigurationTest;
 import com.dev2ever.model.Author;
+import com.dev2ever.service.ServiceAuthor;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 //@SpringJUnitConfig(classes= LocalConfigurationTest.class)
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = LocalConfigurationTest.class)
-@ActiveProfiles({"local","production"})
 public class ServiceAuthorTest {
 
-    @Autowired
+
+    @MockBean
     private ServiceAuthor serviceAuthor;
 
     @Test
@@ -28,5 +28,6 @@ public class ServiceAuthorTest {
         author.setName("John");
         author.setLastName("Doe");
         serviceAuthor.save(author);
+        assertNotNull(serviceAuthor.getAll());
     }
 }

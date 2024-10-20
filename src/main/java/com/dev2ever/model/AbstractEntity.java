@@ -14,7 +14,6 @@ public class AbstractEntity implements Serializable {
     private Long id;
 
     @Version
-    @Column(name = "OptLock")
     private Integer version;
 
     @Override

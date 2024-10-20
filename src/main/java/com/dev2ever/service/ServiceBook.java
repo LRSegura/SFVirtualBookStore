@@ -26,7 +26,7 @@ public class ServiceBook {
         Book book = new Book();
         book.setTitle(jsonBook.title());
         book.setPublisher(jsonBook.publisher());
-        book.setYear(jsonBook.year());
+        book.setReleaseYear(jsonBook.year());
         Author author = repositoryAuthor.findById(jsonBook.idAuthor()).orElseThrow(() -> new RuntimeException("Author not found"));
         book.setAuthor(author);
         repositoryBook.save(book);

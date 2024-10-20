@@ -26,7 +26,7 @@ public class Book extends AbstractEntity {
     public String publisher;
 
     @Column()
-    public Integer year;
+    public Integer releaseYear;
 
     @Column()
     public BigDecimal price;
@@ -37,11 +37,11 @@ public class Book extends AbstractEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Book book = (Book) o;
-        return Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(publisher, book.publisher) && Objects.equals(year, book.year) && Objects.equals(price, book.price);
+        return Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(publisher, book.publisher) && Objects.equals(releaseYear, book.releaseYear) && Objects.equals(price, book.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), title, author, publisher, year, price);
+        return Objects.hash(super.hashCode(), title, author, publisher, releaseYear, price);
     }
 }
