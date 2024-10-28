@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("author/")
-//@Profile("production")
+@Profile("production")
 public class WsAuthor {
 
     private final ServiceAuthor serviceAuthor;

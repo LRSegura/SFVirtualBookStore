@@ -1,18 +1,17 @@
 package com.dev2ever.sample;
 
+import com.dev2ever.BeanInfo;
 import com.dev2ever.sample.component.SampleComponentA;
 import com.dev2ever.sample.component.SampleComponentB;
 import com.dev2ever.sample.component.SampleComponentC;
 import com.dev2ever.sample.component.SampleComponentD;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @Profile("test")
-public class SampleAppConfig {
+@Import(JpaConfig.class)
+public class SampleAppConfig extends BeanInfo {
 
     @Bean
     public SampleComponentA sampleComponentA(ApplicationContext applicationContext){
