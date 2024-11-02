@@ -1178,3 +1178,450 @@ public class CustomerRepository {
 ```
 
 By understanding these differences, you can choose the appropriate tool based on your project's specific needs and complexity.
+
+
+# Transactions in Spring Framework (Without Spring Boot)
+
+Transactions in the Spring Framework are a key feature for managing the consistency, atomicity, isolation, and durability (ACID) properties of data manipulation operations in a database. Even without the use of Spring Boot, Spring provides comprehensive support for transaction management through its core framework.
+
+## Key Concepts
+
+1. **Transaction Manager**:
+  - A `PlatformTransactionManager` implementation is required to manage transactions. Common implementations include:
+    - `DataSourceTransactionManager`: For JDBC-based transactions.
+    - `JpaTransactionManager`: For JPA-based transactions.
+
+2. **Transaction Propagation**:
+  - Propagation defines how transactions relate to each other. Some common propagation behaviors include:
+    - `REQUIRED`: Join the existing transaction or create a new one if none exists.
+    - `REQUIRES_NEW`: Suspend the current transaction and create a new one.
+    - `NESTED`: Execute within a nested transaction, if a current transaction exists.
+
+3. **Transaction Isolation Levels**:
+  - Isolation levels manage how transaction integrity is maintained with concurrent transactions. Some levels include:
+    - `READ_UNCOMMITTED`
+    - `READ_COMMITTED`
+    - `REPEATABLE_READ`
+    - `SERIALIZABLE`
+
+## Enabling Transactions
+
+To enable transactions in a Spring application, without using Spring Boot, you typically:
+
+1. **Configure the Transaction Manager**:
+    ```java
+    @Configuration
+    public class AppConfig {
+
+        @Bean
+        public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+            return new JpaTransactionManager(emf);
+        }
+    }
+    ```
+
+2. **Enable Transaction Management**:
+   Add `@EnableTransactionManagement` to your configuration class.
+    ```java
+    @Configuration
+    @EnableTransactionManagement
+    public class AppConfig {
+        // Define beans here
+    }
+    ```
+
+3. **Transactional Methods**:
+   Use the `@Transactional` annotation on methods to indicate that they should be executed within a transaction.
+    ```java
+    @Service
+    public class MyService {
+
+        @Transactional
+        public void performTransaction() {
+            // Business logic that requires transaction
+        }
+    }
+    ```
+
+## Example
+
+Here’s a full example:
+
+### 1. Configuration Class
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+@Configuration
+@EnableTransactionManagement
+public class AppConfig {
+
+    @Bean
+    public DriverManagerDataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl("jdbc:h2:mem:testdb");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
+        return dataSource;
+    }
+
+    @Bean
+    public EntityManagerFactory entityManagerFactory() {
+        return Persistence.createEntityManagerFactory("myJpaUnit");
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+}
+```
+
+### 2. Service Class
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@Service
+public class MyService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional
+    public void performTransaction() {
+        // Business logic that requires transaction
+        // e.g., persisting an entity
+        // entityManager.persist(entity);
+    }
+}
+```
+
+This example sets up a JPA transaction manager and a service with a transactional method. The `@EnableTransactionManagement` annotation activates transaction management for the Spring context in use. The `@Transactional` annotation on `performTransaction` ensures that the method executes within a transaction.
+
+## Summary
+
+Without Spring Boot, you manually configure the transaction management setup in Spring. This usually involves defining the transaction manager, enabling transaction management, and using the `@Transactional` annotation on the methods that require transactional behavior. This approach retains the power and flexibility of Spring’s transaction support while allowing you to control the exact configuration and components used.
+
+
+# Transaction Propagation in Spring Framework
+
+Transaction propagation in the Spring Framework defines how transactions relate to each other when multiple transactional methods are called. Understanding propagation behaviors is crucial for handling complex transaction scenarios effectively.
+
+## Propagation Behaviors
+
+Spring supports several propagation behaviors:
+
+1. **REQUIRED**:
+  - If a transaction exists, the method will run within that transaction.
+  - If there is no existing transaction, a new one will be created.
+  - This is the default propagation behavior.
+    ```java
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void someMethod() {
+        // This method will run in the current transaction, or create a new one if none exists.
+    }
+    ```
+
+2. **REQUIRES_NEW**:
+  - A new transaction will always be created, and the current transaction (if exists) will be suspended.
+    ```java
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void someMethod() {
+        // This method will always run in a new transaction, suspending any existing transaction.
+    }
+    ```
+
+3. **NESTED**:
+  - If a transaction exists, the method runs within a nested transaction.
+  - If there is no existing transaction, it behaves like `REQUIRED` and creates a new one.
+  - Nested transactions allow partial rollback; only the nested transaction can be rolled back instead of the entire global transaction.
+    ```java
+    @Transactional(propagation = Propagation.NESTED)
+    public void someMethod() {
+        // This method runs within a nested transaction if one exists.
+    }
+    ```
+
+4. **MANDATORY**:
+  - If an existing transaction exists, it will run within that transaction.
+  - If there is no existing transaction, an exception will be thrown.
+    ```java
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void someMethod() {
+        // This method expects an existing transaction; otherwise, an exception is thrown.
+    }
+    ```
+
+5. **NEVER**:
+  - The method should not run within a transaction. If a transaction exists, an exception will be thrown.
+    ```java
+    @Transactional(propagation = Propagation.NEVER)
+    public void someMethod() {
+        // This method should not run within a transaction.
+        // If it does, an exception is thrown.
+    }
+    ```
+
+6. **NOT_SUPPORTED**:
+  - The method will not run within a transaction. If an existing transaction exists, it will be suspended.
+    ```java
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void someMethod() {
+        // This method runs without a transaction.
+        // Any existing transaction is suspended.
+    }
+    ```
+
+7. **SUPPORTS**:
+  - If a transaction exists, the method will run within that transaction.
+  - If there is no existing transaction, it will run non-transactionally.
+    ```java
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void someMethod() {
+        // This method runs within an existing transaction if one exists.
+        // Otherwise, it runs non-transactionally.
+    }
+    ```
+
+## Example Usage
+
+Consider the following example where a service method calls two other methods with different propagation settings:
+
+```java
+@Service
+public class TransactionalService {
+
+    // Method with the default REQUIRED propagation
+    @Transactional
+    public void methodA() {
+        // Some transactional operations
+        methodB(); // Calls a method with REQUIRES_NEW propagation
+        methodC(); // Calls a method with NESTED propagation
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void methodB() {
+        // This will run in a new transaction, suspending methodA's transaction
+    }
+
+    @Transactional(propagation = Propagation.NESTED)
+    public void methodC() {
+        // This will run within a nested transaction if methodA's transaction exists
+    }
+}
+```
+
+## Summary
+
+- **REQUIRED**: Join existing or create a new transaction.
+- **REQUIRES_NEW**: Create a new transaction, suspending the existing one.
+- **NESTED**: Run within a nested transaction.
+- **MANDATORY**: Run within an existing transaction or throw an exception.
+- **NEVER**: Do not run within a transaction; throw an exception if one exists.
+- **NOT_SUPPORTED**: Run without a transaction.
+- **SUPPORTS**: Run within a transaction if one exists; otherwise, run non-transactionally.
+
+These propagation behaviors provide flexibility to manage transactions across different methods and services, ensuring that your application's data integrity and consistency are maintained effectively.
+
+
+# Transaction Isolation Levels in Spring Framework
+
+Transaction isolation levels determine how transaction integrity is maintained in a multi-user environment, especially when multiple transactions are executed concurrently. Isolation levels control how and when the changes made by one transaction become visible to other transactions.
+
+## Isolation Levels
+
+1. **READ_UNCOMMITTED**:
+  - Allows a transaction to read uncommitted changes made by other transactions.
+  - This level has the highest concurrency but can lead to problems such as dirty reads, non-repeatable reads, and phantom reads.
+    ```java
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public void someMethod() {
+        // This method operates at the READ_UNCOMMITTED isolation level.
+    }
+    ```
+
+2. **READ_COMMITTED**:
+  - Prevents dirty reads by ensuring that a transaction only reads committed data.
+  - This level mitigates the risk of reading uncommitted data but doesn't prevent non-repeatable reads and phantom reads.
+    ```java
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void someMethod() {
+        // This method operates at the READ_COMMITTED isolation level.
+    }
+    ```
+
+3. **REPEATABLE_READ**:
+  - Ensures that if a transaction reads a row twice, it will get the same data each time.
+  - Prevents dirty reads and non-repeatable reads but may still allow phantom reads.
+    ```java
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void someMethod() {
+        // This method operates at the REPEATABLE_READ isolation level.
+    }
+    ```
+
+4. **SERIALIZABLE**:
+  - The strictest isolation level, ensuring complete isolation from other transactions.
+  - Prevents dirty reads, non-repeatable reads, and phantom reads but can significantly reduce concurrency.
+    ```java
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void someMethod() {
+        // This method operates at the SERIALIZABLE isolation level.
+    }
+    ```
+
+## Isolation Levels Explained
+
+- **Dirty Reads**: Occurs when a transaction reads data written by another transaction that has not yet been committed. Mitigated by `READ_COMMITTED`, `REPEATABLE_READ`, and `SERIALIZABLE`.
+
+- **Non-repeatable Reads**: Happens when a transaction reads the same row twice and gets different data each time because another transaction has modified the row between the reads. Mitigated by `REPEATABLE_READ` and `SERIALIZABLE`.
+
+- **Phantom Reads**: Occurs when a transaction executes a query twice and sees different rows because another transaction has inserted or deleted rows between the two queries. Only `SERIALIZABLE` can prevent phantom reads.
+
+## Example Usage
+
+Consider a scenario where you want certain database operations to have a high level of isolation to ensure data consistency while allowing others to have more concurrency:
+
+```java
+@Service
+public class IsolationLevelService {
+
+    // Example method with READ_COMMITTED isolation level
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void readCommittedMethod() {
+        // Operations at READ_COMMITTED level
+    }
+
+    // Example method with SERIALIZABLE isolation level
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void serializableMethod() {
+        // Operations at SERIALIZABLE level
+    }
+}
+```
+
+## Summary
+
+- **READ_UNCOMMITTED**: Highest risk of data anomalies like dirty reads.
+- **READ_COMMITTED**: Prevents dirty reads but allows non-repeatable reads and phantom reads.
+- **REPEATABLE_READ**: Prevents dirty reads and non-repeatable reads but allows phantom reads.
+- **SERIALIZABLE**: Prevents all types of data anomalies but reduces concurrency.
+
+Choosing the right isolation level depends on the specific requirements of your application and the trade-offs between data consistency and concurrency.
+
+# Exceptions in Transactions and Rollback Rules in Spring Framework
+
+Transaction management in Spring allows you to control what actions should be taken when exceptions occur during transaction execution. By default, Spring rolls back on runtime, unchecked exceptions (subclasses of `RuntimeException`) and errors, but it commits on checked exceptions (subclasses of `Exception`).
+
+## Default Behavior
+
+- **RuntimeException**: Transactions are rolled back by default.
+- **Checked Exceptions**: Transactions are committed by default.
+
+To customize the rollback rules, you can use the `@Transactional` annotation's `rollbackFor`, `noRollbackFor`, `rollbackForClassName`, or `noRollbackForClassName` attributes.
+
+## Customizing Rollback Rules
+
+1. **Rollback for Specific Exceptions**:
+  - Use the `rollbackFor` attribute to specify exceptions that should trigger a rollback.
+    ```java
+    @Transactional(rollbackFor = {CustomException.class, AnotherException.class})
+    public void someMethod() {
+        // Business logic
+    }
+    ```
+
+2. **No Rollback for Specific Exceptions**:
+  - Use the `noRollbackFor` attribute to specify exceptions that should not trigger a rollback.
+    ```java
+    @Transactional(noRollbackFor = {CustomException.class})
+    public void someMethod() {
+        // Business logic
+    }
+    ```
+
+3. **Rollback for Specific Exception Names**:
+  - Use the `rollbackForClassName` attribute to specify exceptions by fully qualified class names for rollback.
+    ```java
+    @Transactional(rollbackForClassName = {"com.example.exception.CustomException"})
+    public void someMethod() {
+        // Business logic
+    }
+    ```
+
+4. **No Rollback for Specific Exception Names**:
+  - Use the `noRollbackForClassName` attribute to specify exceptions by fully qualified class names that should not trigger a rollback.
+    ```java
+    @Transactional(noRollbackForClassName = {"com.example.exception.CustomException"})
+    public void someMethod() {
+        // Business logic
+    }
+    ```
+
+## Example Usage
+
+Consider an example where you want to roll back transactions on a custom checked exception:
+
+### 1. Define Custom Exception
+```java
+public class CustomCheckedException extends Exception {
+    public CustomCheckedException(String message) {
+        super(message);
+    }
+}
+```
+
+### 2. Service Class with Transactional Methods
+```java
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TransactionalService {
+
+    // This method will roll back the transaction if a CustomCheckedException is thrown
+    @Transactional(rollbackFor = CustomCheckedException.class)
+    public void methodWithRollback() throws CustomCheckedException {
+        // Some business logic
+        if (someCondition) {
+            throw new CustomCheckedException("Triggering rollback");
+        }
+    }
+
+    // This method will not roll back the transaction for IllegalArgumentException
+    @Transactional(noRollbackFor = IllegalArgumentException.class)
+    public void methodWithoutRollback() {
+        // Some business logic
+        if (someCondition) {
+            throw new IllegalArgumentException("This will not trigger rollback");
+        }
+    }
+}
+```
+
+## Summary
+
+- **Default Rollback Behavior**:
+  - Runtime exceptions and errors trigger a rollback.
+  - Checked exceptions do not trigger a rollback.
+
+- **Customizing Rollback Behavior**:
+  - `rollbackFor`: Specified exceptions will trigger a rollback.
+  - `noRollbackFor`: Specified exceptions will not trigger a rollback.
+  - `rollbackForClassName`: Specified exception class names will trigger a rollback.
+  - `noRollbackForClassName`: Specified exception class names will not trigger a rollback.
+
+Customizing rollback rules allows finer control over transaction behavior, ensuring that certain exceptions lead to transaction rollback while others do not, based on the specific needs of your application.
